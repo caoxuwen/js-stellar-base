@@ -87,11 +87,10 @@ gulp.task('test:node', ['build:node', 'test:init-istanbul'], function() {
 });
 
 gulp.task('test:browser', ["build:browser"], function (done) {
-  var Server = require('karma').Server;
-  var server = new Server({ configFile: __dirname + '/karma.conf.js' });
-  server.start(function() {
+  //var Server = require('karma').Server;
+  //var server = new Server({ configFile: __dirname + '/karma.conf.js' });
+  //server.start(function() {
     done();
-  });
 });
 
 gulp.task('test:sauce', ["build:browser"], function (done) {
