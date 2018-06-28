@@ -71,7 +71,7 @@ export class Asset {
     if (this.isNative()) {
       return xdr.Asset.assetTypeNative();
     }
-      
+
     let xdrType, xdrTypeString;
     if (this.code.length <= 4) {
       xdrType = xdr.AssetAlphaNum4;
@@ -122,7 +122,7 @@ export class Asset {
   getAssetType() {
     if (this.isNative()) {
       return 'native';
-    } 
+    }
     if (this.code.length >= 1 && this.code.length <= 4) {
       return "credit_alphanum4";
     }
