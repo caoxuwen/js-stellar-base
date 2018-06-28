@@ -2,7 +2,7 @@ describe('Asset', function() {
 
     describe("constructor", function () {
 
-        it("throws an error when there's no issuer for non XLM type asset", function () {
+        it("throws an error when there's no issuer for non IONX type asset", function () {
             expect(() => new StellarBase.Asset("USD")).to.throw(/Issuer cannot be null/)
         });
 
@@ -20,7 +20,7 @@ describe('Asset', function() {
     describe("getCode()", function () {
         it("returns a code for a native asset object", function () {
             var asset = new StellarBase.Asset.native();
-            expect(asset.getCode()).to.be.equal('XLM');
+            expect(asset.getCode()).to.be.equal('IONX');
         });
 
         it("returns a code for a non-native asset", function () {

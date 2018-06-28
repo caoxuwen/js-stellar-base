@@ -43,7 +43,7 @@ let MAX_LEDGER   = 0xFFFFFFFF; // max uint32
         destination: destinationB,
         amount: "100"
         asset: Asset.native()
-    }) // <- sends 100 XLM to destinationB
+    }) // <- sends 100 IONX to destinationB
  *   .build();
  *
  * transaction.sign(sourceKeypair);

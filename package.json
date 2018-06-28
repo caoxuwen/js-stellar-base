@@ -1,7 +1,7 @@
 {
-  "name": "stellar-base",
+  "name": "ion-base",
   "version": "0.7.8",
-  "description": "Low level stellar support library",
+  "description": "Low level ion support library (fork from Stellar)",
   "main": "lib/index.js",
   "scripts": {
     "test": "babel-node ./node_modules/gulp/bin/gulp.js test:node",
@@ -15,20 +15,19 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/stellar/js-stellar-base.git"
+    "url": "https://github.com/caoxuwen/js-stellar-base.git"
   },
   "keywords": [
-    "stellar"
+    "ion"
   ],
   "engines": {
     "node": ">=4"
   },
-  "author": "Scott Fleckenstein <scott@stellar.org>",
+  "author": "Xuwen Cao <caoxuwen@gmail.com>",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/stellar/js-stellar-base/issues"
   },
-  "homepage": "https://github.com/stellar/js-stellar-base",
+  "homepage": "https://github.com/caoxuwen/js-stellar-base",
   "devDependencies": {
     "babel": "~5.8.23",
     "babel-core": "~5.8.25",

@@ -6,11 +6,11 @@ import padEnd from 'lodash/padEnd';
 import trimEnd from 'lodash/trimEnd';
 
 /**
- * Asset class represents an asset, either the native asset (`XLM`)
+ * Asset class represents an asset, either the native asset (`IONX`)
  * or an asset code / issuer account ID pair.
  *
  * An asset code describes an asset code and issuer pair. In the case of the native
- * asset XLM, the issuer will be null.
+ * asset IONX, the issuer will be null.
  *
  * @constructor
  * @param {string} code - The asset code.
@@ -21,7 +21,7 @@ export class Asset {
     if (!/^[a-zA-Z0-9]{1,12}$/.test(code)) {
       throw new Error("Asset code is invalid (maximum alphanumeric, 12 characters at max)");
     }
-    if (String(code).toLowerCase() !== "xlm" && !issuer) {
+    if (String(code).toLowerCase() !== "ionx" && !issuer) {
       throw new Error("Issuer cannot be null");
     }
     if (issuer && !StrKey.isValidEd25519PublicKey(issuer)) {
@@ -37,7 +37,7 @@ export class Asset {
    * @Return {Asset}
    */
   static native() {
-    return new Asset("XLM");
+    return new Asset("IONX");
   }
 
   /**

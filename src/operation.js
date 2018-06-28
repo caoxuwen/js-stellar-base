@@ -61,7 +61,7 @@ export class Operation {
    * Create and fund a non existent account.
    * @param {object} opts
    * @param {string} opts.destination - Destination account ID to create an account for.
-   * @param {string} opts.startingBalance - Amount in XLM the account should be funded for. Must be greater
+   * @param {string} opts.startingBalance - Amount in IONX the account should be funded for. Must be greater
    *                                   than the [reserve balance amount](https://www.stellar.org/developers/learn/concepts/fees.html).
    * @param {string} [opts.source] - The source account for the payment. Defaults to the transaction's source account.
    * @returns {xdr.CreateAccountOp}
@@ -120,7 +120,7 @@ export class Operation {
 
   /**
    * Returns a XDR PaymentOp. A "payment" operation send the specified amount to the
-   * destination account, optionally through a path. XLM payments create the destination
+   * destination account, optionally through a path. IONX payments create the destination
    * account if it does not exist.
    * @param {object} opts
    * @param {Asset} opts.sendAsset - The asset to pay with.
