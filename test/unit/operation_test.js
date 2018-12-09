@@ -252,7 +252,7 @@ describe('Operation', function() {
 
             expect(obj.signer.ed25519PublicKey).to.be.equal(opts.signer.ed25519PublicKey);
             expect(obj.signer.weight).to.be.equal(opts.signer.weight);
-            expect(obj.homeDomain).to.be.equal(opts.homeDomain);
+            expect(obj.homeDomain.toString()).to.be.equal(opts.homeDomain);
         });
 
         it("creates a setOptionsOp with preAuthTx signer", function () {
@@ -331,6 +331,25 @@ describe('Operation', function() {
 
             expectBuffersToBeEqual(obj.signer.sha256Hash, hash);
             expect(obj.signer.weight).to.be.equal(opts.signer.weight);
+        });
+
+        it("empty homeDomain is decoded correctly", function () {
+            const keypair = StellarBase.Keypair.random()
+            const account = new StellarBase.Account(keypair.publicKey(), '0')
+
+            // First operation do nothing.
+            const tx1 = new StellarBase.TransactionBuilder(account)
+              .addOperation(StellarBase.Operation.setOptions({}))
+              .build()
+
+            // Second operation unset homeDomain
+            const tx2 = new StellarBase.TransactionBuilder(account)
+              .addOperation(StellarBase.Operation.setOptions({ homeDomain: ''}))
+              .build()
+
+            expect(tx1.operations[0].homeDomain).to.be.undefined;
+            expect(tx2.operations[0].homeDomain).to.be.equal('');
+
         });
 
         it("string setFlags", function() {
@@ -722,7 +741,7 @@ describe('Operation', function() {
             var obj = StellarBase.Operation.fromXDRObject(operation);
             expect(obj.type).to.be.equal("manageData");
             expect(obj.name).to.be.equal(opts.name);
-            expect(obj.value.toString('hex')).to.be.equal(Buffer.from(opts.value).toString('hex'));
+            expect(obj.value.toString('ascii')).to.be.equal(opts.value);
         });
 
         it("creates a manageDataOp with Buffer value", function () {
@@ -765,6 +784,24 @@ describe('Operation', function() {
             it("value is too long", function () {
                 expect(() => StellarBase.Operation.manageData({name: "a", value: Buffer.alloc(65)})).to.throw()
             });
+        });
+    });
+
+    describe(".bumpSequence", function () {
+        it("creates a bumpSequence", function () {
+            var opts = {
+                bumpTo: "77833036561510299"
+            };
+            let op = StellarBase.Operation.bumpSequence(opts);
+            var xdr = op.toXDR("hex");
+            var operation = StellarBase.xdr.Operation.fromXDR(Buffer.from(xdr, "hex"));
+            var obj = StellarBase.Operation.fromXDRObject(operation);
+            expect(obj.type).to.be.equal("bumpSequence");
+            expect(obj.bumpTo).to.be.equal(opts.bumpTo);
+        });
+
+        it("fails when `bumpTo` is not string", function () {
+            expect(() => StellarBase.Operation.bumpSequence({bumpTo: 1000})).to.throw()
         });
     });
 

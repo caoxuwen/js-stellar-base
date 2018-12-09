@@ -1,6 +1,6 @@
 {
   "name": "ion-base",
-  "version": "0.7.9",
+  "version": "0.9.0",
   "description": "Low level ion support library (fork from Stellar)",
   "main": "lib/index.js",
   "scripts": {
@@ -50,7 +50,7 @@
     "gulp-webpack": "^1.3.1",
     "isparta": "^3.1.0",
     "istanbul": "^0.4.5",
-    "jsdoc": "3.5.3",
+    "jsdoc": "3.5.5",
     "jshint-stylish": "^1.0.1",
     "karma": "^0.13.9",
     "karma-chrome-launcher": "^0.1.7",
@@ -70,8 +70,8 @@
   "dependencies": {
     "base32.js": "~0.1.0",
     "bignumber.js": "^4.0.0",
-    "crc": "^3.3.0",
-    "js-xdr": "^1.0.0",
+    "crc": "3.5.0",
+    "js-xdr": "^1.0.5",
     "lodash": "^4.17.10",
     "sha.js": "^2.3.6",
     "tweetnacl": "^1.0.0"
