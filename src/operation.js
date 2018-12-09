@@ -429,6 +429,42 @@ export class Operation {
     return new xdr.Operation(opAttributes);
   }
 
+    /**
+   * Returns a XDR CreateMarginOfferOp. A "create margin offer" operation creates an
+   * margin offer that participates in the perpetual swap derivative trading. 
+   * Use manage offer to manage this offer after using this operation to create it.
+   * @param {object} opts
+   * @param {Asset} opts.selling - What you're selling.
+   * @param {Asset} opts.buying - What you're buying.
+   * @param {string} opts.amount - The total amount you're selling. If 0, deletes the offer.
+   * @param {number|string|BigNumber|Object} opts.price - Price of 1 unit of `selling` in terms of `buying`.
+   * @param {number} opts.price.n - If `opts.price` is an object: the price numerator
+   * @param {number} opts.price.d - If `opts.price` is an object: the price denominator
+   * @param {string} [opts.source] - The source account (defaults to transaction source).
+   * @throws {Error} Throws `Error` when the best rational approximation of `price` cannot be found.
+   * @returns {xdr.CreateMarginOfferOp}
+   */
+  static createMarginOffer(opts) {
+    let attributes = {};
+    attributes.selling = opts.selling.toXDRObject();
+    attributes.buying = opts.buying.toXDRObject();
+    if (!this.isValidAmount(opts.amount)) {
+      throw new TypeError(Operation.constructAmountRequirementsError('amount'));
+    }
+    attributes.amount = this._toXDRAmount(opts.amount);
+    if (isUndefined(opts.price)) {
+      throw new TypeError('price argument is required');
+    }
+    attributes.price = this._toXDRPrice(opts.price);
+    let createPassiveOfferOp = new xdr.CreateMarginOfferOp(attributes);
+
+    let opAttributes = {};
+    opAttributes.body = xdr.OperationBody.createMarginOffer(createPassiveOfferOp);
+    this.setSourceAccount(opAttributes, opts);
+
+    return new xdr.Operation(opAttributes);
+  }
+
   /**
    * Transfers native balance to destination account.
    * @param {object} opts
@@ -600,6 +636,13 @@ export class Operation {
       result.amount = this._fromXDRAmount(attrs.amount());
       result.price = this._fromXDRPrice(attrs.price());
       result.offerId = attrs.offerId().toString();
+      break;
+      case "createMarginOffer":
+      result.type = "createMarginOffer";
+      result.selling = Asset.fromOperation(attrs.selling());
+      result.buying = Asset.fromOperation(attrs.buying());
+      result.amount = this._fromXDRAmount(attrs.amount());
+      result.price = this._fromXDRPrice(attrs.price());
       break;
       case "createPassiveOffer":
       result.type = "createPassiveOffer";
