@@ -1,4 +1,4 @@
-import {default as xdr} from "./generated/stellar-xdr_generated";
+import {default as xdr} from "./generated/_generated";
 import isUndefined from "lodash/isUndefined";
 import isNull from "lodash/isNull";
 import isString from "lodash/isString";

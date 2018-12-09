@@ -699,6 +699,26 @@ describe('Operation', function() {
         });
     });
 
+    describe(".createMarginOffer", function () {
+        it("creates a createMarginOfferOp (string price)", function () {
+            var opts = {};
+            opts.selling = new StellarBase.Asset("USD", "GDGU5OAPHNPU5UCLE5RDJHG7PXZFQYWKCFOEXSXNMR6KRQRI5T6XXCD7");
+            opts.buying = new StellarBase.Asset("USD", "GDGU5OAPHNPU5UCLE5RDJHG7PXZFQYWKCFOEXSXNMR6KRQRI5T6XXCD7");
+            opts.amount = '11.27827';
+            opts.price = '3.07';
+            let op = StellarBase.Operation.createMarginOffer(opts);
+            var xdr = op.toXDR("hex");
+            var operation = StellarBase.xdr.Operation.fromXDR(Buffer.from(xdr, "hex"));
+            var obj = StellarBase.Operation.fromXDRObject(operation);
+            expect(obj.type).to.be.equal("createMarginOffer");
+            expect(obj.selling.equals(opts.selling)).to.be.true;
+            expect(obj.buying.equals(opts.buying)).to.be.true;
+            expect(operation.body().value().amount().toString()).to.be.equal('112782700');
+            expect(obj.amount).to.be.equal(opts.amount);
+            expect(obj.price).to.be.equal(opts.price);
+        });
+    });
+
     describe(".accountMerge", function () {
         it("creates a accountMergeOp", function () {
             var opts = {};

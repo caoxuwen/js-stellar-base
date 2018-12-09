@@ -1,4 +1,4 @@
-// Automatically generated on 2018-08-16T21:01:29+02:00
+// Automatically generated on 2018-12-09T17:04:30+08:00
 // DO NOT EDIT or your changes may be overwritten
 
 /* jshint maxstatements:2147483647  */
@@ -715,7 +715,8 @@ xdr.union("TrustLineEntryExt", {
 //   
 //       int64 limit;  // balance cannot be above this
 //       uint32 flags; // see TrustLineFlags
-//   
+//       int64 debt;
+//       
 //       // reserved for future use
 //       union switch (int v)
 //       {
@@ -744,6 +745,7 @@ xdr.struct("TrustLineEntry", [
   ["balance", xdr.lookup("Int64")],
   ["limit", xdr.lookup("Int64")],
   ["flags", xdr.lookup("Uint32")],
+  ["debt", xdr.lookup("Int64")],
   ["ext", xdr.lookup("TrustLineEntryExt")],
 ]);
 
@@ -752,20 +754,24 @@ xdr.struct("TrustLineEntry", [
 //   enum OfferEntryFlags
 //   {
 //       // issuer has authorized account to perform transactions with its credit
-//       PASSIVE_FLAG = 1
+//       PASSIVE_FLAG = 0x1,
+//   
+//       // flag to indicate whether margin trading
+//       MARGIN_FLAG = 0x2
 //   };
 //
 // ===========================================================================
 xdr.enum("OfferEntryFlags", {
   passiveFlag: 1,
+  marginFlag: 2,
 });
 
 // === xdr source ============================================================
 //
-//   const MASK_OFFERENTRY_FLAGS = 1;
+//   const MASK_OFFERENTRY_FLAGS = 0x3;
 //
 // ===========================================================================
-xdr.const("MASK_OFFERENTRY_FLAGS", 1);
+xdr.const("MASK_OFFERENTRY_FLAGS", 0x3);
 
 // === xdr source ============================================================
 //
@@ -1971,7 +1977,8 @@ xdr.struct("DecoratedSignature", [
 //       ACCOUNT_MERGE = 8,
 //       INFLATION = 9,
 //       MANAGE_DATA = 10,
-//       BUMP_SEQUENCE = 11
+//       BUMP_SEQUENCE = 11,
+//       CREATE_MARGIN_OFFER = 101
 //   };
 //
 // ===========================================================================
@@ -1988,6 +1995,7 @@ xdr.enum("OperationType", {
   inflation: 9,
   manageDatum: 10,
   bumpSequence: 11,
+  createMarginOffer: 101,
 });
 
 // === xdr source ============================================================
@@ -2080,6 +2088,24 @@ xdr.struct("ManageOfferOp", [
 //
 // ===========================================================================
 xdr.struct("CreatePassiveOfferOp", [
+  ["selling", xdr.lookup("Asset")],
+  ["buying", xdr.lookup("Asset")],
+  ["amount", xdr.lookup("Int64")],
+  ["price", xdr.lookup("Price")],
+]);
+
+// === xdr source ============================================================
+//
+//   struct CreateMarginOfferOp
+//   {
+//       Asset selling; // A
+//       Asset buying;  // B
+//       int64 amount;  // amount taker gets. if set to 0, delete the offer
+//       Price price;   // cost of A in terms of B
+//   };
+//
+// ===========================================================================
+xdr.struct("CreateMarginOfferOp", [
   ["selling", xdr.lookup("Asset")],
   ["buying", xdr.lookup("Asset")],
   ["amount", xdr.lookup("Int64")],
@@ -2233,6 +2259,8 @@ xdr.struct("BumpSequenceOp", [
 //           ManageOfferOp manageOfferOp;
 //       case CREATE_PASSIVE_OFFER:
 //           CreatePassiveOfferOp createPassiveOfferOp;
+//       case CREATE_MARGIN_OFFER:
+//           CreateMarginOfferOp createMarginOfferOp;
 //       case SET_OPTIONS:
 //           SetOptionsOp setOptionsOp;
 //       case CHANGE_TRUST:
@@ -2259,6 +2287,7 @@ xdr.union("OperationBody", {
     ["pathPayment", "pathPaymentOp"],
     ["manageOffer", "manageOfferOp"],
     ["createPassiveOffer", "createPassiveOfferOp"],
+    ["createMarginOffer", "createMarginOfferOp"],
     ["setOption", "setOptionsOp"],
     ["changeTrust", "changeTrustOp"],
     ["allowTrust", "allowTrustOp"],
@@ -2273,6 +2302,7 @@ xdr.union("OperationBody", {
     pathPaymentOp: xdr.lookup("PathPaymentOp"),
     manageOfferOp: xdr.lookup("ManageOfferOp"),
     createPassiveOfferOp: xdr.lookup("CreatePassiveOfferOp"),
+    createMarginOfferOp: xdr.lookup("CreateMarginOfferOp"),
     setOptionsOp: xdr.lookup("SetOptionsOp"),
     changeTrustOp: xdr.lookup("ChangeTrustOp"),
     allowTrustOp: xdr.lookup("AllowTrustOp"),
@@ -2303,6 +2333,8 @@ xdr.union("OperationBody", {
 //           ManageOfferOp manageOfferOp;
 //       case CREATE_PASSIVE_OFFER:
 //           CreatePassiveOfferOp createPassiveOfferOp;
+//       case CREATE_MARGIN_OFFER:
+//           CreateMarginOfferOp createMarginOfferOp;
 //       case SET_OPTIONS:
 //           SetOptionsOp setOptionsOp;
 //       case CHANGE_TRUST:
@@ -2762,7 +2794,12 @@ xdr.union("PathPaymentResult", {
 //       // update errors
 //       MANAGE_OFFER_NOT_FOUND = -11, // offerID does not match an existing offer
 //   
-//       MANAGE_OFFER_LOW_RESERVE = -12 // not enough funds to create a new Offer
+//       MANAGE_OFFER_LOW_RESERVE = -12, // not enough funds to create a new Offer
+//   
+//       // margin errors
+//       MANAGE_OFFER_MARGIN_NOT_ASSET = -50, // margin cannot be native
+//       MANAGE_OFFER_MARGIN_ASSET_INVALID = -51 // can only trade same debt
+//   
 //   };
 //
 // ===========================================================================
@@ -2780,6 +2817,8 @@ xdr.enum("ManageOfferResultCode", {
   manageOfferBuyNoIssuer: -10,
   manageOfferNotFound: -11,
   manageOfferLowReserve: -12,
+  manageOfferMarginNotAsset: -50,
+  manageOfferMarginAssetInvalid: -51,
 });
 
 // === xdr source ============================================================
@@ -3239,6 +3278,8 @@ xdr.enum("OperationResultCode", {
 //           ManageOfferResult manageOfferResult;
 //       case CREATE_PASSIVE_OFFER:
 //           ManageOfferResult createPassiveOfferResult;
+//       case CREATE_MARGIN_OFFER:
+//           ManageOfferResult createMarginOfferResult;
 //       case SET_OPTIONS:
 //           SetOptionsResult setOptionsResult;
 //       case CHANGE_TRUST:
@@ -3265,6 +3306,7 @@ xdr.union("OperationResultTr", {
     ["pathPayment", "pathPaymentResult"],
     ["manageOffer", "manageOfferResult"],
     ["createPassiveOffer", "createPassiveOfferResult"],
+    ["createMarginOffer", "createMarginOfferResult"],
     ["setOption", "setOptionsResult"],
     ["changeTrust", "changeTrustResult"],
     ["allowTrust", "allowTrustResult"],
@@ -3279,6 +3321,7 @@ xdr.union("OperationResultTr", {
     pathPaymentResult: xdr.lookup("PathPaymentResult"),
     manageOfferResult: xdr.lookup("ManageOfferResult"),
     createPassiveOfferResult: xdr.lookup("ManageOfferResult"),
+    createMarginOfferResult: xdr.lookup("ManageOfferResult"),
     setOptionsResult: xdr.lookup("SetOptionsResult"),
     changeTrustResult: xdr.lookup("ChangeTrustResult"),
     allowTrustResult: xdr.lookup("AllowTrustResult"),
@@ -3306,6 +3349,8 @@ xdr.union("OperationResultTr", {
 //           ManageOfferResult manageOfferResult;
 //       case CREATE_PASSIVE_OFFER:
 //           ManageOfferResult createPassiveOfferResult;
+//       case CREATE_MARGIN_OFFER:
+//           ManageOfferResult createMarginOfferResult;
 //       case SET_OPTIONS:
 //           SetOptionsResult setOptionsResult;
 //       case CHANGE_TRUST:

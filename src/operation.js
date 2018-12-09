@@ -1,4 +1,4 @@
-import {default as xdr} from "./generated/stellar-xdr_generated";
+import {default as xdr} from "./generated/_generated";
 import {Keypair} from "./keypair";
 import {hash} from "./hashing";
 import {StrKey} from "./strkey";
@@ -46,6 +46,7 @@ export const AuthImmutableFlag = 1 << 2;
  * * `{@link Operation.pathPayment}`
  * * `{@link Operation.manageOffer}`
  * * `{@link Operation.createPassiveOffer}`
+ * * `{@link Operation.createMarginOffer}`
  * * `{@link Operation.setOptions}`
  * * `{@link Operation.changeTrust}`
  * * `{@link Operation.allowTrust}`
@@ -315,6 +316,7 @@ Operation.bumpSequence = ops.bumpSequence;
 Operation.changeTrust = ops.changeTrust;
 Operation.createAccount = ops.createAccount;
 Operation.createPassiveOffer = ops.createPassiveOffer;
+Operation.createMarginOffer = ops.createMarginOffer;
 Operation.inflation = ops.inflation;
 Operation.manageData = ops.manageData;
 Operation.manageOffer = ops.manageOffer;
