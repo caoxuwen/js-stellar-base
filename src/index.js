@@ -1,5 +1,5 @@
 
-import {default as xdr} from "./generated/_generated";
+import {default as xdr} from "./generated/stellar-xdr_generated";
 
 export {xdr};
 export {hash} from "./hashing";
@@ -9,7 +9,7 @@ export {UnsignedHyper,Hyper} from "js-xdr";
 export {Transaction} from "./transaction";
 export {TransactionBuilder} from "./transaction_builder";
 export {Asset} from "./asset";
-export {Operation, AuthRequiredFlag, AuthRevocableFlag, AuthImmutableFlag} from "./operation";
+export {Operation, AuthRequiredFlag, AuthRevocableFlag, AuthImmutableFlag, BaseAssetFlag} from "./operation";
 export * from "./memo";
 export {Account} from "./account";
 export {Network, Networks} from "./network";

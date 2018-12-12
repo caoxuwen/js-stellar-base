@@ -2,7 +2,7 @@ import {Network} from "./network";
 import {sign, verify} from "./signing";
 import * as base58 from "./base58";
 import {StrKey} from "./strkey";
-import {default as xdr} from "./generated/_generated";
+import {default as xdr} from "./generated/stellar-xdr_generated";
 import nacl from "tweetnacl";
 
 /**

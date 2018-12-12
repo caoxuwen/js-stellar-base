@@ -1,4 +1,4 @@
-import {default as xdr} from "../generated/_generated";
+import {default as xdr} from "../generated/stellar-xdr_generated";
 import {Keypair} from "../keypair";
 import {StrKey} from "../strkey";
 import isUndefined from 'lodash/isUndefined';
@@ -11,6 +11,7 @@ import isString from 'lodash/isString';
  *   - `{@link AuthRequiredFlag}`
  *   - `{@link AuthRevocableFlag}`
  *   - `{@link AuthImmutableFlag}`
+ *   - `{@link BaseAssetFlag}`
  *
  * It's possible to set/clear multiple flags at once using logical or.
  * @function

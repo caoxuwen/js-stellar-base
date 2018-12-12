@@ -219,6 +219,7 @@ describe('Operation', function() {
             expect(StellarBase.AuthRequiredFlag).to.be.equal(1);
             expect(StellarBase.AuthRevocableFlag).to.be.equal(2);
             expect(StellarBase.AuthImmutableFlag).to.be.equal(4);
+            expect(StellarBase.BaseAssetFlag).to.be.equal(8);
         });
 
         it("creates a setOptionsOp", function () {

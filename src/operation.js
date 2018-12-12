@@ -1,4 +1,4 @@
-import {default as xdr} from "./generated/_generated";
+import {default as xdr} from "./generated/stellar-xdr_generated";
 import {Keypair} from "./keypair";
 import {hash} from "./hashing";
 import {StrKey} from "./strkey";
@@ -37,6 +37,12 @@ export const AuthRevocableFlag = 1 << 1;
  * @see [Account flags](https://www.stellar.org/developers/guides/concepts/accounts.html#flags)
  */
 export const AuthImmutableFlag = 1 << 2;
+/**
+ * When set using `{@link Operation.setOptions}` option, then entails this assets issued by this
+ * account are base assets. (added from ION)
+ * @constant
+ */
+export const BaseAssetFlag = 1 << 3;
 
 /**
  * `Operation` class represents [operations](https://www.stellar.org/developers/learn/concepts/operations.html) in Stellar network.
