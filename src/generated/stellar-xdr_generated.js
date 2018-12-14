@@ -1,4 +1,4 @@
-// Automatically generated on 2018-12-12T14:42:44+08:00
+// Automatically generated on 2018-12-14T09:44:59+08:00
 // DO NOT EDIT or your changes may be overwritten
 
 /* jshint maxstatements:2147483647  */
@@ -1386,7 +1386,8 @@ xdr.union("PathPaymentResult", {
 //   
 //       // margin errors
 //       MANAGE_OFFER_MARGIN_NOT_ASSET = -50, // margin cannot be native
-//       MANAGE_OFFER_MARGIN_ASSET_INVALID = -51 // can only trade same debt
+//       MANAGE_OFFER_MARGIN_ASSET_INVALID = -51, // can only trade same debt
+//       MANAGE_OFFER_INSUFFICIENT_MARGIN = -52 // can only trade same debt
 //   };
 //
 // ===========================================================================
@@ -1406,6 +1407,7 @@ xdr.enum("ManageOfferResultCode", {
   manageOfferLowReserve: -12,
   manageOfferMarginNotAsset: -50,
   manageOfferMarginAssetInvalid: -51,
+  manageOfferInsufficientMargin: -52,
 });
 
 // === xdr source ============================================================
