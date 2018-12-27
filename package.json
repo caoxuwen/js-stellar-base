@@ -1,6 +1,6 @@
 {
   "name": "ion-base",
-  "version": "0.9.5",
+  "version": "0.9.6",
   "description": "Low level ion support library (fork from Stellar)",
   "main": "lib/index.js",
   "scripts": {

@@ -1,4 +1,4 @@
-// Automatically generated on 2018-12-14T09:44:59+08:00
+// Automatically generated on 2018-12-27T16:38:23+08:00
 // DO NOT EDIT or your changes may be overwritten
 
 /* jshint maxstatements:2147483647  */
@@ -1704,13 +1704,19 @@ xdr.union("AccountMergeResult", {
 //       // codes considered as "success" for the operation
 //       INFLATION_SUCCESS = 0,
 //       // codes considered as "failure" for the operation
-//       INFLATION_NOT_TIME = -1
+//       INFLATION_NOT_TIME = -1,
+//       INFLATION_NO_REFERENCE_PRICE = -2,
+//       INFLATION_INVALID_MID_PRICE = -3,
+//       INFLATION_DEBT_NOT_ZERO = -4
 //   };
 //
 // ===========================================================================
 xdr.enum("InflationResultCode", {
   inflationSuccess: 0,
   inflationNotTime: -1,
+  inflationNoReferencePrice: -2,
+  inflationInvalidMidPrice: -3,
+  inflationDebtNotZero: -4,
 });
 
 // === xdr source ============================================================
@@ -1718,12 +1724,14 @@ xdr.enum("InflationResultCode", {
 //   struct InflationPayout // or use PaymentResultAtom to limit types?
 //   {
 //       AccountID destination;
+//       Asset asset;
 //       int64 amount;
 //   };
 //
 // ===========================================================================
 xdr.struct("InflationPayout", [
   ["destination", xdr.lookup("AccountId")],
+  ["asset", xdr.lookup("Asset")],
   ["amount", xdr.lookup("Int64")],
 ]);
 
