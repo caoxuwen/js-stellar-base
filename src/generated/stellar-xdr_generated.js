@@ -1,4 +1,4 @@
-// Automatically generated on 2018-12-27T16:38:23+08:00
+// Automatically generated on 2018-12-31T20:44:33+08:00
 // DO NOT EDIT or your changes may be overwritten
 
 /* jshint maxstatements:2147483647  */
@@ -566,7 +566,8 @@ xdr.struct("DecoratedSignature", [
 //       INFLATION = 9,
 //       MANAGE_DATA = 10,
 //       BUMP_SEQUENCE = 11,
-//       CREATE_MARGIN_OFFER = 101
+//       CREATE_MARGIN_OFFER = 101,
+//       LIQUIDATION = 102
 //   };
 //
 // ===========================================================================
@@ -584,6 +585,7 @@ xdr.enum("OperationType", {
   manageDatum: 10,
   bumpSequence: 11,
   createMarginOffer: 101,
+  liquidation: 102,
 });
 
 // === xdr source ============================================================
@@ -863,6 +865,8 @@ xdr.struct("BumpSequenceOp", [
 //           ManageDataOp manageDataOp;
 //       case BUMP_SEQUENCE:
 //           BumpSequenceOp bumpSequenceOp;
+//       case LIQUIDATION:
+//           void;
 //       }
 //
 // ===========================================================================
@@ -883,6 +887,7 @@ xdr.union("OperationBody", {
     ["inflation", xdr.void()],
     ["manageDatum", "manageDataOp"],
     ["bumpSequence", "bumpSequenceOp"],
+    ["liquidation", xdr.void()],
   ],
   arms: {
     createAccountOp: xdr.lookup("CreateAccountOp"),
@@ -937,6 +942,8 @@ xdr.union("OperationBody", {
 //           ManageDataOp manageDataOp;
 //       case BUMP_SEQUENCE:
 //           BumpSequenceOp bumpSequenceOp;
+//       case LIQUIDATION:
+//           void;
 //       }
 //       body;
 //   };
@@ -1760,6 +1767,63 @@ xdr.union("InflationResult", {
 
 // === xdr source ============================================================
 //
+//   enum LiquidationResultCode
+//   {
+//       // codes considered as "success" for the operation
+//       LIQUIDATION_SUCCESS = 0,
+//       // codes considered as "failure" for the operation
+//       LIQUIDATION_NOT_TIME = -1,
+//       LIQUIDATION_NO_REFERENCE_PRICE = -2
+//   };
+//
+// ===========================================================================
+xdr.enum("LiquidationResultCode", {
+  liquidationSuccess: 0,
+  liquidationNotTime: -1,
+  liquidationNoReferencePrice: -2,
+});
+
+// === xdr source ============================================================
+//
+//   struct LiquidationEffect // or use PaymentResultAtom to limit types?
+//   {
+//       AccountID destination;
+//       Asset asset;
+//       int64 amount;
+//   };
+//
+// ===========================================================================
+xdr.struct("LiquidationEffect", [
+  ["destination", xdr.lookup("AccountId")],
+  ["asset", xdr.lookup("Asset")],
+  ["amount", xdr.lookup("Int64")],
+]);
+
+// === xdr source ============================================================
+//
+//   union LiquidationResult switch (LiquidationResultCode code)
+//   {
+//   case LIQUIDATION_SUCCESS:
+//       LiquidationEffect effects<>;
+//   default:
+//       void;
+//   };
+//
+// ===========================================================================
+xdr.union("LiquidationResult", {
+  switchOn: xdr.lookup("LiquidationResultCode"),
+  switchName: "code",
+  switches: [
+    ["liquidationSuccess", "effects"],
+  ],
+  arms: {
+    effects: xdr.varArray(xdr.lookup("LiquidationEffect"), 2147483647),
+  },
+  defaultArm: xdr.void(),
+});
+
+// === xdr source ============================================================
+//
 //   enum ManageDataResultCode
 //   {
 //       // codes considered as "success" for the operation
@@ -1891,6 +1955,8 @@ xdr.enum("OperationResultCode", {
 //           ManageDataResult manageDataResult;
 //       case BUMP_SEQUENCE:
 //           BumpSequenceResult bumpSeqResult;
+//       case LIQUIDATION:
+//           LiquidationResult liquidationResult;
 //       }
 //
 // ===========================================================================
@@ -1911,6 +1977,7 @@ xdr.union("OperationResultTr", {
     ["inflation", "inflationResult"],
     ["manageDatum", "manageDataResult"],
     ["bumpSequence", "bumpSeqResult"],
+    ["liquidation", "liquidationResult"],
   ],
   arms: {
     createAccountResult: xdr.lookup("CreateAccountResult"),
@@ -1926,6 +1993,7 @@ xdr.union("OperationResultTr", {
     inflationResult: xdr.lookup("InflationResult"),
     manageDataResult: xdr.lookup("ManageDataResult"),
     bumpSeqResult: xdr.lookup("BumpSequenceResult"),
+    liquidationResult: xdr.lookup("LiquidationResult"),
   },
 });
 
@@ -1962,6 +2030,8 @@ xdr.union("OperationResultTr", {
 //           ManageDataResult manageDataResult;
 //       case BUMP_SEQUENCE:
 //           BumpSequenceResult bumpSeqResult;
+//       case LIQUIDATION:
+//           LiquidationResult liquidationResult;
 //       }
 //       tr;
 //   default:
@@ -2705,20 +2775,23 @@ xdr.struct("AccountEntry", [
 //   enum TrustLineFlags
 //   {
 //       // issuer has authorized account to perform transactions with its credit
-//       AUTHORIZED_FLAG = 1
+//       AUTHORIZED_FLAG = 0x1,
+//       // under liquidation process
+//       LIQUIDATION_FLAG = 0x2
 //   };
 //
 // ===========================================================================
 xdr.enum("TrustLineFlags", {
   authorizedFlag: 1,
+  liquidationFlag: 2,
 });
 
 // === xdr source ============================================================
 //
-//   const MASK_TRUSTLINE_FLAGS = 1;
+//   const MASK_TRUSTLINE_FLAGS = 0x3;
 //
 // ===========================================================================
-xdr.const("MASK_TRUSTLINE_FLAGS", 1);
+xdr.const("MASK_TRUSTLINE_FLAGS", 0x3);
 
 // === xdr source ============================================================
 //
@@ -3152,6 +3225,8 @@ xdr.union("LedgerHeaderExt", {
 //       Hash bucketListHash;     // hash of the ledger state
 //   
 //       uint32 ledgerSeq; // sequence number of this ledger
+//       uint64 lastFunding; // last funding run
+//       uint64 lastLiquidation; // last liquidation run
 //   
 //       int64 totalCoins; // total number of stroops in existence.
 //                         // 10,000,000 stroops in 1 XLM
@@ -3189,6 +3264,8 @@ xdr.struct("LedgerHeader", [
   ["txSetResultHash", xdr.lookup("Hash")],
   ["bucketListHash", xdr.lookup("Hash")],
   ["ledgerSeq", xdr.lookup("Uint32")],
+  ["lastFunding", xdr.lookup("Uint64")],
+  ["lastLiquidation", xdr.lookup("Uint64")],
   ["totalCoins", xdr.lookup("Int64")],
   ["feePool", xdr.lookup("Int64")],
   ["inflationSeq", xdr.lookup("Uint32")],
