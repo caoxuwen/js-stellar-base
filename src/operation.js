@@ -58,6 +58,7 @@ export const BaseAssetFlag = 1 << 3;
  * * `{@link Operation.allowTrust}`
  * * `{@link Operation.accountMerge}`
  * * `{@link Operation.inflation}`
+ * * `{@link Operation.liquidation}`
  * * `{@link Operation.manageData}`
  * * `{@link Operation.bumpSequence}`
  *
@@ -193,6 +194,9 @@ export class Operation {
       case "inflation":
       result.type = "inflation";
       break;
+      case "liquidation":
+      result.type = "liquidation";
+      break;
       case "bumpSequence":
       result.type = "bumpSequence";
       result.bumpTo = attrs.bumpTo().toString();
@@ -324,6 +328,7 @@ Operation.createAccount = ops.createAccount;
 Operation.createPassiveOffer = ops.createPassiveOffer;
 Operation.createMarginOffer = ops.createMarginOffer;
 Operation.inflation = ops.inflation;
+Operation.liquidation = ops.liquidation;
 Operation.manageData = ops.manageData;
 Operation.manageOffer = ops.manageOffer;
 Operation.pathPayment = ops.pathPayment;
