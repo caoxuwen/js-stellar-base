@@ -28,7 +28,8 @@ enum OperationType
     MANAGE_DATA = 10,
     BUMP_SEQUENCE = 11,
     CREATE_MARGIN_OFFER = 101,
-    LIQUIDATION = 102
+    LIQUIDATION = 102,
+    CREATE_LIQUIDATION_OFFER = 103
 };
 
 /* CreateAccount
@@ -132,6 +133,24 @@ struct CreateMarginOfferOp
     Asset buying;  // B
     int64 amount;  // amount taker gets. if set to 0, delete the offer
     Price price;   // cost of A in terms of B
+};
+
+/* Creates a liquidation trade offer
+
+Threshold: med
+
+Result: CreateLiquidationOfferResult
+
+*/
+struct CreateLiquidationOfferOp
+{
+    Asset selling; // A
+    Asset buying;  // B
+    int64 amount;  // amount taker gets. if set to 0, delete the offer
+    Price price;   // cost of A in terms of B
+
+    // 0=create a new offer, otherwise edit an existing offer
+    uint64 offerID;
 };
 
 /* Set Account Options
@@ -275,6 +294,8 @@ struct Operation
         CreatePassiveOfferOp createPassiveOfferOp;
     case CREATE_MARGIN_OFFER:
         CreateMarginOfferOp createMarginOfferOp;
+    case CREATE_LIQUIDATION_OFFER:
+        CreateLiquidationOfferOp createLiquidationOfferOp;
     case SET_OPTIONS:
         SetOptionsOp setOptionsOp;
     case CHANGE_TRUST:
@@ -683,7 +704,8 @@ enum LiquidationResultCode
     LIQUIDATION_SUCCESS = 0,
     // codes considered as "failure" for the operation
     LIQUIDATION_NOT_TIME = -1,
-    LIQUIDATION_NO_REFERENCE_PRICE = -2
+    LIQUIDATION_NO_REFERENCE_PRICE = -2,
+    LIQUIDATION_PROCESS_ERROR = -3
 };
 
 struct LiquidationEffect // or use PaymentResultAtom to limit types?
@@ -769,6 +791,8 @@ case opINNER:
         ManageOfferResult createPassiveOfferResult;
     case CREATE_MARGIN_OFFER:
         ManageOfferResult createMarginOfferResult;
+    case CREATE_LIQUIDATION_OFFER:
+        ManageOfferResult createLiquidationOfferResult;
     case SET_OPTIONS:
         SetOptionsResult setOptionsResult;
     case CHANGE_TRUST:

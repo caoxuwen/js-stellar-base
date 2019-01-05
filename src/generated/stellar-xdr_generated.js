@@ -1,4 +1,4 @@
-// Automatically generated on 2018-12-31T20:44:33+08:00
+// Automatically generated on 2019-01-05T10:49:36+08:00
 // DO NOT EDIT or your changes may be overwritten
 
 /* jshint maxstatements:2147483647  */
@@ -567,7 +567,8 @@ xdr.struct("DecoratedSignature", [
 //       MANAGE_DATA = 10,
 //       BUMP_SEQUENCE = 11,
 //       CREATE_MARGIN_OFFER = 101,
-//       LIQUIDATION = 102
+//       LIQUIDATION = 102,
+//       CREATE_LIQUIDATION_OFFER = 103
 //   };
 //
 // ===========================================================================
@@ -586,6 +587,7 @@ xdr.enum("OperationType", {
   bumpSequence: 11,
   createMarginOffer: 101,
   liquidation: 102,
+  createLiquidationOffer: 103,
 });
 
 // === xdr source ============================================================
@@ -700,6 +702,28 @@ xdr.struct("CreateMarginOfferOp", [
   ["buying", xdr.lookup("Asset")],
   ["amount", xdr.lookup("Int64")],
   ["price", xdr.lookup("Price")],
+]);
+
+// === xdr source ============================================================
+//
+//   struct CreateLiquidationOfferOp
+//   {
+//       Asset selling; // A
+//       Asset buying;  // B
+//       int64 amount;  // amount taker gets. if set to 0, delete the offer
+//       Price price;   // cost of A in terms of B
+//   
+//       // 0=create a new offer, otherwise edit an existing offer
+//       uint64 offerID;
+//   };
+//
+// ===========================================================================
+xdr.struct("CreateLiquidationOfferOp", [
+  ["selling", xdr.lookup("Asset")],
+  ["buying", xdr.lookup("Asset")],
+  ["amount", xdr.lookup("Int64")],
+  ["price", xdr.lookup("Price")],
+  ["offerId", xdr.lookup("Uint64")],
 ]);
 
 // === xdr source ============================================================
@@ -851,6 +875,8 @@ xdr.struct("BumpSequenceOp", [
 //           CreatePassiveOfferOp createPassiveOfferOp;
 //       case CREATE_MARGIN_OFFER:
 //           CreateMarginOfferOp createMarginOfferOp;
+//       case CREATE_LIQUIDATION_OFFER:
+//           CreateLiquidationOfferOp createLiquidationOfferOp;
 //       case SET_OPTIONS:
 //           SetOptionsOp setOptionsOp;
 //       case CHANGE_TRUST:
@@ -880,6 +906,7 @@ xdr.union("OperationBody", {
     ["manageOffer", "manageOfferOp"],
     ["createPassiveOffer", "createPassiveOfferOp"],
     ["createMarginOffer", "createMarginOfferOp"],
+    ["createLiquidationOffer", "createLiquidationOfferOp"],
     ["setOption", "setOptionsOp"],
     ["changeTrust", "changeTrustOp"],
     ["allowTrust", "allowTrustOp"],
@@ -896,6 +923,7 @@ xdr.union("OperationBody", {
     manageOfferOp: xdr.lookup("ManageOfferOp"),
     createPassiveOfferOp: xdr.lookup("CreatePassiveOfferOp"),
     createMarginOfferOp: xdr.lookup("CreateMarginOfferOp"),
+    createLiquidationOfferOp: xdr.lookup("CreateLiquidationOfferOp"),
     setOptionsOp: xdr.lookup("SetOptionsOp"),
     changeTrustOp: xdr.lookup("ChangeTrustOp"),
     allowTrustOp: xdr.lookup("AllowTrustOp"),
@@ -928,6 +956,8 @@ xdr.union("OperationBody", {
 //           CreatePassiveOfferOp createPassiveOfferOp;
 //       case CREATE_MARGIN_OFFER:
 //           CreateMarginOfferOp createMarginOfferOp;
+//       case CREATE_LIQUIDATION_OFFER:
+//           CreateLiquidationOfferOp createLiquidationOfferOp;
 //       case SET_OPTIONS:
 //           SetOptionsOp setOptionsOp;
 //       case CHANGE_TRUST:
@@ -1773,7 +1803,8 @@ xdr.union("InflationResult", {
 //       LIQUIDATION_SUCCESS = 0,
 //       // codes considered as "failure" for the operation
 //       LIQUIDATION_NOT_TIME = -1,
-//       LIQUIDATION_NO_REFERENCE_PRICE = -2
+//       LIQUIDATION_NO_REFERENCE_PRICE = -2,
+//       LIQUIDATION_PROCESS_ERROR = -3
 //   };
 //
 // ===========================================================================
@@ -1781,6 +1812,7 @@ xdr.enum("LiquidationResultCode", {
   liquidationSuccess: 0,
   liquidationNotTime: -1,
   liquidationNoReferencePrice: -2,
+  liquidationProcessError: -3,
 });
 
 // === xdr source ============================================================
@@ -1941,6 +1973,8 @@ xdr.enum("OperationResultCode", {
 //           ManageOfferResult createPassiveOfferResult;
 //       case CREATE_MARGIN_OFFER:
 //           ManageOfferResult createMarginOfferResult;
+//       case CREATE_LIQUIDATION_OFFER:
+//           ManageOfferResult createLiquidationOfferResult;
 //       case SET_OPTIONS:
 //           SetOptionsResult setOptionsResult;
 //       case CHANGE_TRUST:
@@ -1970,6 +2004,7 @@ xdr.union("OperationResultTr", {
     ["manageOffer", "manageOfferResult"],
     ["createPassiveOffer", "createPassiveOfferResult"],
     ["createMarginOffer", "createMarginOfferResult"],
+    ["createLiquidationOffer", "createLiquidationOfferResult"],
     ["setOption", "setOptionsResult"],
     ["changeTrust", "changeTrustResult"],
     ["allowTrust", "allowTrustResult"],
@@ -1986,6 +2021,7 @@ xdr.union("OperationResultTr", {
     manageOfferResult: xdr.lookup("ManageOfferResult"),
     createPassiveOfferResult: xdr.lookup("ManageOfferResult"),
     createMarginOfferResult: xdr.lookup("ManageOfferResult"),
+    createLiquidationOfferResult: xdr.lookup("ManageOfferResult"),
     setOptionsResult: xdr.lookup("SetOptionsResult"),
     changeTrustResult: xdr.lookup("ChangeTrustResult"),
     allowTrustResult: xdr.lookup("AllowTrustResult"),
@@ -2016,6 +2052,8 @@ xdr.union("OperationResultTr", {
 //           ManageOfferResult createPassiveOfferResult;
 //       case CREATE_MARGIN_OFFER:
 //           ManageOfferResult createMarginOfferResult;
+//       case CREATE_LIQUIDATION_OFFER:
+//           ManageOfferResult createLiquidationOfferResult;
 //       case SET_OPTIONS:
 //           SetOptionsResult setOptionsResult;
 //       case CHANGE_TRUST:
